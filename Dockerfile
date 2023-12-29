@@ -11,5 +11,8 @@ RUN pip3 install -r requirements.txt
 # Copy the entire project into the container
 COPY . .
 
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
+
 # Define the command to run when the container starts
 CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
