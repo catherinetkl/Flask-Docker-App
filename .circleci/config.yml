@@ -39,7 +39,7 @@ jobs:
       - run:
           name: Run tests on app.py with pytest
           command: |
-            python -m pytest -v app.py
+            python -m pytest tests/test_app.py
 
   publish:
     executor: docker/docker
