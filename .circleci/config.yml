@@ -60,6 +60,7 @@ jobs:
     steps:
       - setup_remote_docker
       - heroku/install
+      - run: echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_LOGIN}" --password-stdin
       - docker/pull:
           images: $DOCKER_LOGIN/$IMAGE_NAME:latest
       - run:
