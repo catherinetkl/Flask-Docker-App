@@ -16,6 +16,11 @@ jobs:
           command: |
             python -m pip install -r requirements.txt
 
+      - run:
+          name: Install pytest
+          command: |
+            python -m pip install pytest
+
   test:
     docker:
       - image: cimg/python:3.12.1
