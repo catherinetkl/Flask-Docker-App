@@ -61,13 +61,14 @@ jobs:
       - setup_remote_docker
       - heroku/install
       - run: echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_LOGIN}" --password-stdin
-      - docker/pull:
-          images: $IMAGE_NAME:latest
+      - run:
+          name: Pull Image From Docker Hub
+          command: docker pull $DOCKER_LOGIN/$IMAGE_NAME:latest
       - run:
           name: Heroku Container Push With Image From Docker Hub
           command: |
               heroku container:login
-              docker tag $IMAGE_NAME:latest registry.heroku.com/$HEROKU_APP_NAME/web
+              docker tag $DOCKER_LOGIN/$IMAGE_NAME:latest registry.heroku.com/$HEROKU_APP_NAME/web
               # format --- docker tag <image name from docker hub> registry.heroku.com/<app-name>/web
               docker push registry.heroku.com/$HEROKU_APP_NAME/web
               # format --- docker push registry.heroku.com/<app-name>/web
