@@ -37,9 +37,9 @@ jobs:
             python -m pip install pytest
 
       - run:
-          name: Run Flask tests
+          name: Run tests on app.py with pytest
           command: |
-            python -m pytest
+            python -m pytest -v app.py
 
   publish:
     executor: docker/docker
