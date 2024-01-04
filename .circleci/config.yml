@@ -1,0 +1,72 @@
+version: 2.1
+
+# Declare and configure orbs (reusable components)
+orbs:
+  docker: circleci/docker@2.4.0
+  heroku: circleci/heroku@2.0.0
+
+jobs:
+  build:
+    docker:
+      - image: cimg/python:3.12.1
+    steps:
+      - checkout
+      - run:
+          name: Install Python dependencies
+          command: |
+            python -m pip install -r requirements.txt
+
+  test:
+    docker:
+      - image: cimg/python:3.12.1
+    steps:
+      - checkout
+      - run:
+          name: Run Flask tests
+          command: |
+            python -m pytest
+
+  publish:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - docker/check
+      - docker/build:
+          image: $DOCKER_LOGIN/$IMAGE_NAME
+          tag: <<pipeline.git.tag>>
+      - docker/push:
+          image: $DOCKER_LOGIN/$IMAGE_NAME
+          tag: <<pipeline.git.tag>>
+
+  pull-and-deploy:
+    docker:
+      - image: cimg/python:3.12.1
+    steps:
+      - setup_remote_docker
+      - heroku/install
+      - docker/pull:
+          images: $DOCKER_LOGIN/$IMAGE_NAME:latest
+      - run:
+          name: Heroku Container Push With Image From Docker Hub
+          command: |
+              heroku container:login
+              docker tag $DOCKER_LOGIN/$IMAGE_NAME:latest registry.heroku.com/$HEROKU_APP_NAME/web
+              # format --- docker tag <image name from docker hub> registry.heroku.com/<app-name>/web
+              docker push registry.heroku.com/$HEROKU_APP_NAME/web
+              # format --- docker push registry.heroku.com/<app-name>/web
+              heroku container:release web -a $HEROKU_APP_NAME
+
+workflows:
+  simple_workflow:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - publish:
+          requires:
+            - test
+      - pull-and-deploy:
+          requires:
+            - publish
