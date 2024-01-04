@@ -27,6 +27,16 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Python dependencies
+          command: |
+            python -m pip install -r requirements.txt
+
+      - run:
+          name: Install pytest
+          command: |
+            python -m pip install pytest
+
+      - run:
           name: Run Flask tests
           command: |
             python -m pytest
