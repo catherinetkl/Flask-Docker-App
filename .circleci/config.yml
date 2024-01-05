@@ -45,7 +45,7 @@ jobs:
   # Job to scan for vulnerabilities and push Docker image to Docker Hub
   scan:
     docker:
-      - image: cimg/node:21.4.0
+      - image: cimg/python:3.12.1
     steps:
       # Set up access to the Docker daemon
       - setup_remote_docker
