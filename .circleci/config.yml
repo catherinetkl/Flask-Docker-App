@@ -50,10 +50,10 @@ jobs:
       - docker/check
       - docker/build:
           image: $DOCKER_LOGIN/$IMAGE_NAME
-          tag: <<pipeline.git.tag>>
+          tag: latest
       - docker/push:
           image: $DOCKER_LOGIN/$IMAGE_NAME
-          tag: <<pipeline.git.tag>>
+          tag: latest
 
   pull-and-deploy:
     docker:
