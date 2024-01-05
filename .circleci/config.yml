@@ -24,7 +24,7 @@ jobs:
 
   test:
     docker:
-      - image: python:3.13.0a2-slim
+      - image: cimg/python:3.12.1
     steps:
       - checkout
       - run:
@@ -45,7 +45,7 @@ jobs:
   # Job to scan for vulnerabilities and push Docker image to Docker Hub
   # scan:
   #   docker:
-  #     - image: python:3.13.0a2-slim
+  #     - image: cimg/python:3.12.1
   #   steps:
   #     # Set up access to the Docker daemon
   #     - setup_remote_docker
@@ -64,7 +64,7 @@ jobs:
 
   build-and-push:
     docker:
-      - image: python:3.13.0a2-slim
+      - image: cimg/python:3.12.1
     steps:
       - setup_remote_docker
       - checkout
@@ -78,7 +78,7 @@ jobs:
 
   pull-and-deploy:
     docker:
-      - image: python:3.13.0a2-slim
+      - image: cimg/python:3.12.1
     steps:
       - setup_remote_docker
       - heroku/install
