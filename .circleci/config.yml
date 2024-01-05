@@ -41,8 +41,9 @@ jobs:
           command: |
             python -m pytest tests/test_app.py
 
-  publish:
-    executor: docker/docker
+  build-and-push:
+    docker:
+      - image: cimg/python:3.12.1
     steps:
       - setup_remote_docker
       - checkout
@@ -81,9 +82,9 @@ workflows:
       - test:
           requires:
             - build
-      - publish:
+      - build-and-push:
           requires:
             - test
       - pull-and-deploy:
           requires:
-            - publish
+            - build-and-push
