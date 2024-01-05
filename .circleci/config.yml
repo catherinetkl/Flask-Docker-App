@@ -63,7 +63,7 @@ jobs:
       - run: echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_LOGIN}" --password-stdin
       - run:
           name: Pull Image From Docker Hub
-          command: docker pull $DOCKER_LOGIN/$IMAGE_NAME:latest
+          command: docker pull $DOCKER_LOGIN/$IMAGE_NAME:<<pipeline.git.tag>>
       - run:
           name: Heroku Container Push With Image From Docker Hub
           command: |
