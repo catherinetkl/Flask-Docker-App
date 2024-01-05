@@ -4,6 +4,7 @@ version: 2.1
 orbs:
   docker: circleci/docker@2.4.0
   heroku: circleci/heroku@2.0.0
+  snyk: snyk/snyk@2.0.2
 
 jobs:
   build:
@@ -40,6 +41,26 @@ jobs:
           name: Run tests on app.py with pytest
           command: |
             python -m pytest tests/test_app.py
+
+  # Job to scan for vulnerabilities and push Docker image to Docker Hub
+  scan:
+    docker:
+      - image: cimg/node:21.4.0
+    steps:
+      # Set up access to the Docker daemon
+      - setup_remote_docker
+      - checkout
+      # Build the Docker image
+      - run: docker build -t $DOCKER_LOGIN/$IMAGE_NAME:latest .
+      # Login to Docker Hub using environment variables
+      - run: echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_LOGIN}" --password-stdin
+      # Push the image to Docker Hub
+      - run: docker push $DOCKER_LOGIN/$IMAGE_NAME:latest
+      # Run Snyk scan on the Docker image
+      - snyk/scan:
+          docker-image-name: $DOCKER_LOGIN/$IMAGE_NAME:latest
+          severity-threshold: high
+
 
   build-and-push:
     docker:
@@ -82,6 +103,9 @@ workflows:
       - test:
           requires:
             - build
+      - scan:
+          requires:
+            - test
       - build-and-push:
           requires:
             - test
